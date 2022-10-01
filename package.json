@@ -1,0 +1,27 @@
+{
+  "name": "musical-flows-from-peer-2-peer",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "main": "dist/my-element.es.js",
+  "exports": {
+    ".": "./dist/my-element.es.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "build:watch": "vite build --watch",
+    "hyp:sync": "hyp drive sync -wy ./dist hyper://8057baacfd38775d12b03f55ebfae8972a0b757377f29b6c66ffc5bbb8642edf/"
+  },
+  "dependencies": {
+    "@most/core": "^1.6.1",
+    "@most/scheduler": "^1.3.0",
+    "lit": "^2.3.1"
+  },
+  "devDependencies": {
+    "vite": "^3.1.0"
+  }
+}
