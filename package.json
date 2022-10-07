@@ -11,7 +11,7 @@
     "dist"
   ],
   "scripts": {
-    "dev": "vite",
+    "dev": "vite --port 4321",
     "build": "vite build",
     "build:watch": "vite build --watch",
     "hyp:sync": "hyp drive sync -wy ./dist hyper://8057baacfd38775d12b03f55ebfae8972a0b757377f29b6c66ffc5bbb8642edf/"
