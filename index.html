@@ -7,11 +7,16 @@
     <title>p2p musical flows</title>
     <link rel="stylesheet" href="./src/index.css" />
     <script type="module" src="/src/index.js"></script>
+    <script src="/all-around-keyboard.min.js"></script>
   </head>
   <body>
     <h1>🎶🌊</h1>
-    <!-- <my-element>
-      <h1>Vite + Lit</h1>
-    </my-element> -->
+    <input type="text" id="channel"></input>
+    <all-around-keyboard synth></all-around-keyboard>
+    <script>
+      document.querySelector("#channel").onchange = (evt) => {
+        location.hash = `#${evt.target.value}`
+      }
+    </script>
   </body>
 </html>

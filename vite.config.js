@@ -9,6 +9,7 @@ export default defineConfig({
     },
     rollupOptions: {
       external: /^lit/
-    }
+    },
+    target: 'esnext'
   }
 })

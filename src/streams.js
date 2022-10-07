@@ -1,5 +1,5 @@
 import { midiSourceSkipDuplicates } from "./midi-source";
-import { newDefaultScheduler } from "@most/scheduler";
+// import { newDefaultScheduler } from "@most/scheduler";
 import pipeline from "pipeline-operator";
 import {
   combineArray,
@@ -7,6 +7,7 @@ import {
   filter,
   map,
   merge,
+  multicast,
   now,
   run,
   runEffects,
@@ -28,9 +29,9 @@ export const cc$ = midiSourceSkipDuplicates("controlchange");
 export const pressedNotes$ = scan(
   (pressed, { type, note }) => {
     if (type === "noteon") {
-      pressed.add(note.identifier);
+      pressed.add(note.number);
     } else if (type === "noteoff") {
-      pressed.delete(note.identifier);
+      pressed.delete(note.number);
     }
     return pressed;
   },
@@ -88,3 +89,23 @@ export const activeNotes$ = pipeline(
   skipRepeatsWith(isEqual)
 );
 
+const pairWindow = (slidingWindow, x) => slidingWindow.concat(x).slice(-2)
+export const activeNotesDiff$ = scan(pairWindow, [new Set(), new Set()], activeNotes$);
+
+export const notesReleased$ = pipeline(
+  activeNotesDiff$,
+  map(
+    ([last, current]) => new Set([...last].filter(k => !current.has(k)))
+  ),
+  filter(e => e.size > 0),
+  multicast,
+)
+
+export const notesAdded$ = pipeline(
+  activeNotesDiff$,
+  map(
+    ([last, current]) => new Set([...current].filter(k => !last.has(k)))
+  ),
+  filter(e => e.size > 0),
+  multicast,
+)
