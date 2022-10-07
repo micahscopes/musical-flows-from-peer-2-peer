@@ -15,7 +15,7 @@ import { uniqueId } from "lodash-es";
 import pipeline from "pipeline-operator";
 import { eventSourceSource } from "./eventsource-source";
 import { setDiffStreams } from "./set-diff-streams";
-import { activeNotes$, noteOn$ } from "./streams";
+import { activeNotes$, noteOn$, pressedNotes$ } from "./streams";
 import { inspectStream, scheduler, tapConsole } from "./util";
 
 const id = uniqueId()
@@ -42,6 +42,8 @@ const currentChannelUrl$ = pipeline(
   currentChannel$,
   map((channel) => `pubsub://${channel}?format=json`)
 );
+
+// inspectStream(currentChannelUrl$)
 
 const messagesOnCurrentChannel$ = pipeline(
   currentChannelUrl$,
@@ -102,7 +104,7 @@ const greetOnLatestChannel$ = pipeline(
     fetch(url, { method: "POST", body: JSON.stringify({message: 'hello!'}) });
   })
 );
-runEffects(greetOnLatestChannel$, scheduler);
+// runEffects(greetOnLatestChannel$, scheduler);
 
 const sendActiveNotesToCurrentChannel$ = pipeline(
   combine(
@@ -120,6 +122,9 @@ const sendActiveNotesToCurrentChannel$ = pipeline(
 );
 
 runEffects(sendActiveNotesToCurrentChannel$, scheduler);
+
+
+
 
 
 // inspectStream(noteOn$)

@@ -7,6 +7,7 @@ import {
   filter,
   map,
   merge,
+  mergeArray,
   multicast,
   now,
   run,
@@ -20,11 +21,32 @@ import {
   tap,
 } from "@most/core";
 import { isEqual } from "lodash-es";
-import { is, isNot } from "./util";
+import { inspectStream, is, isNot } from "./util";
+import { domEvent } from "@most/dom-event";
+
+const kb = document.querySelector('all-around-keyboard')
+const kbKeypress$ = map(
+   ({index}) => ({
+    note: {number: index},
+    type: "noteon"
+   }),
+  domEvent('keypress', kb)
+)
+const kbKeyrelease$ = map(
+   ({index}) => ({
+    note: {number: index},
+    type: "noteoff"
+   }),
+  domEvent('keyrelease', kb)
+)
 
 export const noteOn$ = midiSourceSkipDuplicates("noteon");
 export const noteOff$ = midiSourceSkipDuplicates("noteoff");
 export const cc$ = midiSourceSkipDuplicates("controlchange");
+
+// inspectStream(
+//   mergeArray([noteOn$, noteOff$, kbKeypress$, kbKeyrelease$])
+// )
 
 export const pressedNotes$ = scan(
   (pressed, { type, note }) => {
@@ -36,7 +58,10 @@ export const pressedNotes$ = scan(
     return pressed;
   },
   new Set(),
-  merge(noteOn$, noteOff$)
+  mergeArray([
+    // noteOn$, noteOff$,
+    kbKeypress$, kbKeyrelease$
+  ])
 );
 
 export const sustainPedal$ = pipeline(
