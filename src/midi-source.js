@@ -7,7 +7,7 @@ const ALL_CHANNELS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16];
 
 await WebMidi.enable();
 
-class MidiStream {
+class MidiSource {
   constructor(
     event,
     deviceOrDevices = null,
@@ -34,13 +34,13 @@ class MidiStream {
     const dispose = () =>
       this.devices.forEach((device) => device.removeListener(this.event, send));
 
-    console.log(
-      "setting up a stream for",
-      this.devices,
-      "on",
-      this.event,
-      "events"
-    );
+    // console.log(
+    //   "setting up a stream for",
+    //   this.devices,
+    //   "on",
+    //   this.event,
+    //   "events"
+    // );
 
     this.devices.forEach((device) =>
       device.addListener(this.event, send, {
@@ -61,12 +61,12 @@ function tryEvent(t, x, sink) {
   }
 }
 
-export const midiStream = (event, device, channels) =>
-  new MidiStream(event, device, channels);
+export const midiSource = (event, device, channels) =>
+  new MidiSource(event, device, channels);
 
 const skipDuplicateMidiEvents = skipRepeatsWith((noteX, noteY) =>
   isEqual(noteX.rawData, noteY.rawData)
 );
 
-export const midiStreamSkipDuplicates = (event, device, channels) =>
-  skipDuplicateMidiEvents(midiStream(event, device, channels));
+export const midiSourceSkipDuplicates = (event, device, channels) =>
+  skipDuplicateMidiEvents(midiSource(event, device, channels));
